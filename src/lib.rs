@@ -1,5 +1,7 @@
 // Copyright (c) The Diem Core Contributors
 // SPDX-License-Identifier: Apache-2.0
+#![no_std]
+#![feature(error_in_core)]
 
 #![forbid(unsafe_code)]
 
@@ -302,6 +304,8 @@
 //! assert_eq!(to_bytes(&map)?, to_bytes(&expecting)?);
 //! # Ok(())}
 //! ```
+
+extern crate alloc;
 
 mod de;
 mod error;
