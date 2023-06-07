@@ -172,7 +172,7 @@ where
     }
 
     fn output_variant_index(&mut self, v: u32) -> Result<()> {
-        self.output_u32_as_uleb128(v).map_err(|e| Error::from(e))
+        self.output_u32_as_uleb128(v)
     }
 
     /// Serialize a sequence length as a u32.
@@ -231,27 +231,27 @@ where
     }
 
     fn serialize_u8(self, v: u8) -> Result<()> {
-        self.output.write_all(&[v])?;
+        self.output.write_all(&[v]).map_err(|e| Error::from(e))?;
         Ok(())
     }
 
     fn serialize_u16(self, v: u16) -> Result<()> {
-        self.output.write_all(&v.to_le_bytes())?;
+        self.output.write_all(&v.to_le_bytes()).map_err(|e| Error::from(e))?;
         Ok(())
     }
 
     fn serialize_u32(self, v: u32) -> Result<()> {
-        self.output.write_all(&v.to_le_bytes())?;
+        self.output.write_all(&v.to_le_bytes()).map_err(|e| Error::from(e))?;
         Ok(())
     }
 
     fn serialize_u64(self, v: u64) -> Result<()> {
-        self.output.write_all(&v.to_le_bytes())?;
+        self.output.write_all(&v.to_le_bytes()).map_err(|e| Error::from(e))?;
         Ok(())
     }
 
     fn serialize_u128(self, v: u128) -> Result<()> {
-        self.output.write_all(&v.to_le_bytes())?;
+        self.output.write_all(&v.to_le_bytes()).map_err(|e| Error::from(e))?;
         Ok(())
     }
 
@@ -275,7 +275,7 @@ where
     // Serialize a byte array as an array of bytes.
     fn serialize_bytes(mut self, v: &[u8]) -> Result<()> {
         self.output_seq_len(v.len())?;
-        self.output.write_all(v)?;
+        self.output.write_all(v).map_err(|e| Error::from(e))?;
         Ok(())
     }
 
@@ -289,7 +289,7 @@ where
     where
         T: ?Sized + Serialize,
     {
-        self.output.write_all(&[1])?;
+        self.output.write_all(&[1]).map_err(|e| Error::from(e))?;
         value.serialize(self)
     }
 
@@ -308,8 +308,8 @@ where
         variant_index: u32,
         _variant: &'static str,
     ) -> Result<()> {
-        self.enter_named_container(name).map_err(|e| Error::from(e))?;
-        self.output_variant_index(variant_index).map_err(|e| Error::from(e))
+        self.enter_named_container(name)?;
+        self.output_variant_index(variant_index)
     }
 
     fn serialize_newtype_struct<T>(mut self, name: &'static str, value: &T) -> Result<()>
@@ -551,8 +551,8 @@ where
         self.serializer.output_seq_len(len)?;
 
         for (key, value) in &self.entries {
-            self.serializer.output.write_all(key)?;
-            self.serializer.output.write_all(value)?;
+            self.serializer.output.write_all(key).map_err(|e| Error::from(e))?;
+            self.serializer.output.write_all(value).map_err(|e| Error::from(e))?;
         }
 
         Ok(())
